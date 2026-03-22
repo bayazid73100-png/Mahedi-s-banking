@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mahedi's Bank</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=DM+Sans:wght@300;400;500&family=Tiro+Bangla&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+input[type=number]{-moz-appearance:textfield}
+input::-webkit-inner-spin-button,input::-webkit-outer-spin-button{-webkit-appearance:none}
+
+:root{
+  --glass-bg: rgba(255,255,255,0.055);
+  --glass-border: rgba(255,255,255,0.12);
+  --glass-border-bright: rgba(255,255,255,0.28);
+  --glass-shine: rgba(255,255,255,0.08);
+  --text-primary: rgba(255,255,255,0.95);
+  --text-secondary: rgba(255,255,255,0.5);
+  --text-muted: rgba(255,255,255,0.22);
+  --accent: rgba(255,255,255,0.85);
+}
+
+html{scroll-behavior:smooth}
+
+body{
+  min-height:100vh;
+  background:#050505;
+  color:var(--text-primary);
+  font-family:'DM Sans',sans-serif;
+  font-weight:300;
+  overflow-x:hidden;
+  position:relative;
+}
+
+/* ── ANIMATED BACKGROUND ── */
+.bg-scene{
+  position:fixed;inset:0;z-index:0;overflow:hidden;
+  pointer-events:none;
+}
+.bg-orb{
+  position:absolute;border-radius:50%;
+  filter:blur(100px);
+  animation:orbFloat 12s ease-in-out infinite;
+}
+.orb1{width:600px;height:600px;background:rgba(255,255,255,0.028);top:-200px;left:-200px;animation-delay:0s}
+.orb2{width:400px;height:400px;background:rgba(255,255,255,0.018);bottom:-100px;right:-100px;animation-delay:-5s}
+.orb3{width:300px;height:300px;background:rgba(255,255,255,0.012);top:40%;left:60%;animation-delay:-8s}
+@keyframes orbFloat{
+  0%,100%{transform:translate(0,0) scale(1)}
+  33%{transform:translate(30px,-40px) scale(1.05)}
+  66%{transform:translate(-20px,20px) scale(0.97)}
+}
+
+/* Fine grain texture */
+.bg-scene::after{
+  content:'';position:absolute;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+  opacity:0.4;
+}
+
+/* Thin grid lines */
+.bg-grid{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size:60px 60px;
+  mask-image:radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%);
+}
+
+/* ── HEADER ── */
+header{
+  position:sticky;top:0;z-index:100;
+  padding:0 24px;
+  height:70px;
+  display:flex;align-items:center;gap:16px;
+  background:rgba(5,5,5,0.8);
+  backdrop-filter:blur(40px) saturate(1.5);
+  -webkit-backdrop-filter:blur(40px) saturate(1.5);
+  border-bottom:1px solid var(--glass-border);
+}
+
+.logo-mark{
+  width:40px;height:40px;
+  border-radius:10px;
+  border:1px solid var(--glass-border-bright);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;
+  background:var(--glass-bg);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.12);
+  flex-shrink:0;
+}
+
+.brand{flex:1}
+.brand-name{
+  font-family:'Cinzel',serif;
+  font-size:15px;font-weight:600;
+  letter-spacing:3px;
+  color:var(--text-primary);
+  line-height:1;
+}
+.brand-tagline{
+  font-family:'Tiro Bangla',serif;
+  font-size:10px;color:var(--text-muted);
+  margin-top:3px;letter-spacing:0.5px;
+}
+
+.header-total-wrap{text-align:right}
+.ht-label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--text-muted)}
+.ht-value{
+  font-family:'Cinzel',serif;
+  font-size:24px;font-weight:700;
+  color:var(--text-primary);
+  letter-spacing:-0.5px;
+  line-height:1.1;
+}
+
+/* ── LAYOUT ── */
+.page{
+  position:relative;z-index:1;
+  max-width:480px;margin:0 auto;
+  padding:28px 16px 80px;
+}
+
+/* ── SECTION LABELS ── */
+.section-tag{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:9px;letter-spacing:4px;text-transform:uppercase;
+  color:var(--text-muted);margin-bottom:14px;
+}
+.section-tag::before{content:'';display:block;width:20px;height:1px;background:var(--glass-border-bright)}
+
+/* ── GLASS CARD ── */
+.card{
+  border-radius:24px;
+  background:var(--glass-bg);
+  backdrop-filter:blur(32px) saturate(1.4);
+  -webkit-backdrop-filter:blur(32px) saturate(1.4);
+  border:1px solid var(--glass-border);
+  box-shadow:
+    0 24px 64px rgba(0,0,0,0.6),
+    0 1px 0 var(--glass-shine) inset,
+    0 -1px 0 rgba(0,0,0,0.3) inset;
+  padding:24px;
+  margin-bottom:20px;
+  position:relative;overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;
+  top:0;left:20px;right:20px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);
+}
+
+/* ── NOTE BUTTONS ── */
+.note-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  margin-bottom:20px;
+}
+
+.note-pill{
+  position:relative;
+  padding:14px 4px 11px;
+  border-radius:16px;
+  border:1px solid var(--glass-border);
+  background:rgba(255,255,255,0.04);
+  cursor:pointer;
+  text-align:center;
+  transition:all 0.22s cubic-bezier(.34,1.56,.64,1);
+  overflow:hidden;
+}
+.note-pill::after{
+  content:'';position:absolute;
+  top:0;left:0;right:0;height:50%;
+  background:linear-gradient(rgba(255,255,255,0.05),transparent);
+  border-radius:16px 16px 0 0;
+  pointer-events:none;
+}
+.note-pill:hover{
+  border-color:rgba(255,255,255,0.25);
+  background:rgba(255,255,255,0.08);
+  transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(0,0,0,0.4);
+}
+
+.np-sym{display:block;font-size:9px;color:var(--text-muted);margin-bottom:3px;font-family:'DM Sans',sans-serif;font-weight:400}
+.np-val{
+  display:block;
+  font-family:'Cinzel',serif;
+  font-size:14px;font-weight:600;
+  color:rgba(255,255,255,0.55);
+  transition:color 0.2s;
+}
+
+.note-pill.active{
+  border-color:rgba(255,255,255,0.45);
+  background:rgba(255,255,255,0.12);
+  transform:translateY(-3px) scale(1.05);
+  box-shadow:
+    0 12px 32px rgba(0,0,0,0.5),
+    0 0 0 1px rgba(255,255,255,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.2);
+}
+.note-pill.active .np-val{color:var(--text-primary)}
+
+/* ── QUANTITY CONTROL ── */
+.qty-block{
+  display:flex;align-items:stretch;gap:12px;
+  margin-bottom:16px;
+}
+
+.selected-note-display{
+  min-width:88px;
+  border-radius:16px;
+  border:1px solid var(--glass-border);
+  background:rgba(255,255,255,0.04);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:2px;padding:10px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.06);
+}
+.snd-label{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--text-muted)}
+.snd-value{
+  font-family:'Cinzel',serif;
+  font-size:22px;font-weight:700;
+  color:var(--text-muted);
+  transition:color 0.3s;line-height:1;
+}
+.snd-value.live{color:var(--text-primary)}
+
+.qty-right{flex:1;display:flex;flex-direction:column;gap:6px}
+.qty-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted)}
+.qty-row{display:flex;gap:6px;align-items:center;flex:1}
+
+.qty-btn{
+  width:42px;height:42px;flex-shrink:0;
+  border-radius:12px;
+  border:1px solid var(--glass-border);
+  background:rgba(255,255,255,0.06);
+  color:var(--text-secondary);
+  font-size:24px;font-family:'DM Sans',sans-serif;font-weight:300;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.15s;line-height:1;
+}
+.qty-btn:hover{background:rgba(255,255,255,0.12);border-color:var(--glass-border-bright);color:white}
+.qty-btn:active{transform:scale(0.9)}
+
+.qty-input{
+  flex:1;height:42px;
+  background:rgba(255,255,255,0.05);
+  border:1px solid var(--glass-border);
+  border-radius:12px;
+  color:var(--text-primary);
+  font-family:'Cinzel',serif;
+  font-size:22px;font-weight:600;
+  text-align:center;
+  outline:none;
+  transition:all 0.2s;
+}
+.qty-input:focus{
+  border-color:rgba(255,255,255,0.35);
+  background:rgba(255,255,255,0.08);
+  box-shadow:0 0 0 3px rgba(255,255,255,0.04);
+}
+
+/* ── PREVIEW STRIP ── */
+.preview-strip{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px;
+  border-radius:14px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid var(--glass-border);
+  margin-bottom:16px;
+}
+.ps-formula{font-size:12px;color:var(--text-muted);font-family:'Cinzel',serif;letter-spacing:1px}
+.ps-result{font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--text-primary)}
+
+/* ── ADD BUTTON ── */
+.add-btn{
+  width:100%;padding:16px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,0.22);
+  background:linear-gradient(135deg,rgba(255,255,255,0.12),rgba(255,255,255,0.06));
+  color:var(--text-primary);
+  font-family:'Cinzel',serif;
+  font-size:12px;font-weight:600;
+  letter-spacing:4px;
+  cursor:pointer;
+  transition:all 0.25s;
+  position:relative;overflow:hidden;
+  box-shadow:0 4px 20px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.15);
+}
+.add-btn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.06),transparent);
+  opacity:0;transition:opacity 0.2s;
+}
+.add-btn:hover{
+  background:linear-gradient(135deg,rgba(255,255,255,0.2),rgba(255,255,255,0.1));
+  border-color:rgba(255,255,255,0.4);
+  transform:translateY(-2px);
+  box-shadow:0 12px 32px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.2);
+}
+.add-btn:hover::before{opacity:1}
+.add-btn:active{transform:translateY(0)}
+
+/* ── LEDGER TABLE ── */
+.ledger-wrap{
+  border-radius:22px;
+  overflow:hidden;
+  border:1px solid var(--glass-border);
+  background:rgba(255,255,255,0.03);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  box-shadow:0 24px 64px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06);
+  overflow-x:auto;
+  position:relative;
+}
+.ledger-wrap::before{
+  content:'';position:absolute;
+  top:0;left:24px;right:24px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent);
+  z-index:2;
+}
+
+.ledger-tbl{width:100%;border-collapse:collapse;min-width:380px}
+
+/* Thead */
+.ledger-tbl thead tr{
+  background:rgba(255,255,255,0.04);
+}
+.ledger-tbl thead th{
+  padding:14px 10px;
+  font-family:'Cinzel',serif;
+  font-size:10px;font-weight:600;
+  letter-spacing:1.5px;
+  color:var(--text-secondary);
+  text-align:center;
+  border-bottom:1px solid var(--glass-border);
+  border-right:1px solid rgba(255,255,255,0.04);
+  white-space:nowrap;
+}
+.ledger-tbl thead th:last-child{border-right:none}
+.th-hash{width:36px;color:var(--text-muted)!important;text-align:left!important;padding-left:16px!important}
+.th-del{width:40px}
+
+/* Rows */
+.ledger-tbl tbody tr{
+  border-bottom:1px solid rgba(255,255,255,0.04);
+  transition:background 0.15s;
+  animation:rowSlide 0.35s cubic-bezier(.16,1,.3,1);
+}
+@keyframes rowSlide{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.ledger-tbl tbody tr:hover{background:rgba(255,255,255,0.025)}
+.ledger-tbl tbody tr:last-of-type{border-bottom:none}
+
+.ledger-tbl td{
+  padding:11px 10px;
+  text-align:center;
+  border-right:1px solid rgba(255,255,255,0.03);
+}
+.ledger-tbl td:last-child{border-right:none}
+.td-hash{
+  text-align:left!important;padding-left:16px!important;
+  font-size:10px;color:var(--text-muted);font-family:'Cinzel',serif;
+}
+
+.cell-chip{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:36px;padding:5px 10px;
+  border-radius:8px;
+  font-family:'Cinzel',serif;font-size:13px;font-weight:600;
+  background:rgba(255,255,255,0.09);
+  border:1px solid rgba(255,255,255,0.14);
+  color:var(--text-primary);
+}
+.cell-dot{color:rgba(255,255,255,0.1);font-size:10px}
+
+.del-btn{
+  width:26px;height:26px;
+  background:none;
+  border:1px solid rgba(255,255,255,0.08);
+  color:rgba(255,255,255,0.2);
+  border-radius:7px;font-size:11px;
+  cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;
+  transition:all 0.18s;
+}
+.del-btn:hover{border-color:rgba(255,80,80,0.4);color:rgba(255,120,120,0.7);background:rgba(255,60,60,0.07)}
+
+/* Empty state */
+.empty-state{
+  padding:40px 20px;text-align:center;
+  font-family:'Tiro Bangla',serif;
+  color:var(--text-muted);font-size:14px;
+  line-height:2;
+}
+.empty-icon{font-size:32px;margin-bottom:8px;opacity:0.4;display:block}
+
+/* Sigma total row */
+.sigma-row{
+  background:rgba(255,255,255,0.05)!important;
+  border-top:1px solid rgba(255,255,255,0.12)!important;
+}
+.sigma-row td{padding:12px 10px!important}
+.sig-label{font-size:9px;letter-spacing:2px;color:var(--text-muted);display:block;margin-bottom:2px}
+.sig-qty{font-family:'Cinzel',serif;font-size:12px;color:var(--text-secondary);display:block}
+.sig-amt{font-family:'Cinzel',serif;font-size:13px;font-weight:600;color:var(--text-primary);display:block}
+
+/* ── GRAND TOTAL CARD ── */
+.grand-card{
+  border-radius:24px;
+  padding:28px 28px;
+  background:rgba(255,255,255,0.06);
+  backdrop-filter:blur(40px);
+  -webkit-backdrop-filter:blur(40px);
+  border:1px solid rgba(255,255,255,0.18);
+  box-shadow:
+    0 32px 80px rgba(0,0,0,0.7),
+    inset 0 1px 0 rgba(255,255,255,0.15),
+    inset 0 -1px 0 rgba(0,0,0,0.2);
+  position:relative;overflow:hidden;
+  margin-bottom:20px;
+}
+.grand-card::before{
+  content:'';position:absolute;
+  top:0;left:30px;right:30px;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent);
+}
+.grand-card::after{
+  content:'';position:absolute;
+  bottom:-60px;right:-60px;
+  width:180px;height:180px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.025);
+  filter:blur(20px);
+  pointer-events:none;
+}
+
+.gc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
+.gc-label{
+  font-family:'Tiro Bangla',serif;
+  font-size:14px;color:var(--text-secondary);
+  margin-bottom:4px;
+}
+.gc-sub{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted)}
+
+.gc-amount{
+  font-family:'Cinzel',serif;
+  font-size:40px;font-weight:700;
+  color:var(--text-primary);
+  letter-spacing:-1px;
+  line-height:1;
+  text-shadow:0 0 60px rgba(255,255,255,0.15);
+}
+
+.gc-breakdown{
+  display:flex;flex-wrap:wrap;gap:6px;
+  padding-top:18px;
+  border-top:1px solid var(--glass-border);
+}
+.gc-chip{
+  padding:4px 12px;
+  border-radius:20px;
+  background:rgba(255,255,255,0.06);
+  border:1px solid var(--glass-border);
+  font-family:'Cinzel',serif;
+  font-size:10px;color:var(--text-secondary);
+}
+
+/* ── RESET ── */
+.reset-btn{
+  display:block;margin:0 auto;
+  background:none;
+  border:1px solid rgba(255,255,255,0.08);
+  color:rgba(255,255,255,0.2);
+  border-radius:12px;padding:11px 32px;
+  font-family:'DM Sans',sans-serif;
+  font-size:11px;letter-spacing:3px;text-transform:uppercase;
+  cursor:pointer;transition:all 0.2s;
+}
+.reset-btn:hover{border-color:rgba(255,80,80,0.3);color:rgba(255,120,120,0.6);background:rgba(255,50,50,0.04)}
+
+/* Stagger load animations */
+.card{animation:cardUp 0.6s cubic-bezier(.16,1,.3,1) both}
+.card:nth-child(2){animation-delay:.1s}
+.ledger-wrap{animation:cardUp 0.6s cubic-bezier(.16,1,.3,1) .15s both}
+.grand-card{animation:cardUp 0.6s cubic-bezier(.16,1,.3,1) .2s both}
+@keyframes cardUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+
+<div class="bg-scene">
+  <div class="bg-orb orb1"></div>
+  <div class="bg-orb orb2"></div>
+  <div class="bg-orb orb3"></div>
+</div>
+<div class="bg-grid"></div>
+
+<!-- HEADER -->
+<header>
+  <div class="logo-mark">🏦</div>
+  <div class="brand">
+    <div class="brand-name">MAHEDI'S BANK</div>
+    <div class="brand-tagline">মাটির ব্যাংক — টাকা গণনা</div>
+  </div>
+  <div class="header-total-wrap">
+    <div class="ht-label">সর্বমোট</div>
+    <div class="ht-value" id="hTotal">৳ 0</div>
+  </div>
+</header>
+
+<div class="page">
+
+  <!-- ENTRY CARD -->
+  <div class="section-tag">এন্ট্রি করুন</div>
+  <div class="card">
+
+    <!-- Note pills -->
+    <div class="note-grid">
+      <div class="note-pill" onclick="selNote(1000,this)"><span class="np-sym">৳</span><span class="np-val">1000</span></div>
+      <div class="note-pill" onclick="selNote(500,this)"><span class="np-sym">৳</span><span class="np-val">500</span></div>
+      <div class="note-pill" onclick="selNote(100,this)"><span class="np-sym">৳</span><span class="np-val">100</span></div>
+      <div class="note-pill" onclick="selNote(50,this)"><span class="np-sym">৳</span><span class="np-val">50</span></div>
+      <div class="note-pill" onclick="selNote(20,this)"><span class="np-sym">৳</span><span class="np-val">20</span></div>
+      <div class="note-pill" onclick="selNote(10,this)"><span class="np-sym">৳</span><span class="np-val">10</span></div>
+      <div class="note-pill" onclick="selNote(5,this)"><span class="np-sym">৳</span><span class="np-val">5</span></div>
+    </div>
+
+    <!-- Qty -->
+    <div class="qty-block">
+      <div class="selected-note-display">
+        <div class="snd-label">নোট</div>
+        <div class="snd-value" id="sndVal">—</div>
+      </div>
+      <div class="qty-right">
+        <div class="qty-label">পরিমাণ — Quantity</div>
+        <div class="qty-row">
+          <button class="qty-btn" onclick="dq(-1)">−</button>
+          <input class="qty-input" type="number" id="qInp" value="1" min="1" oninput="updatePreview()">
+          <button class="qty-btn" onclick="dq(1)">+</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live preview -->
+    <div class="preview-strip">
+      <span class="ps-formula" id="psFormula">নোট বেছে নিন ↑</span>
+      <span class="ps-result" id="psResult">৳ —</span>
+    </div>
+
+    <button class="add-btn" onclick="addEntry()">＋ &nbsp; ADD ENTRY</button>
+  </div>
+
+  <!-- LEDGER -->
+  <div class="section-tag">হিসাবের খাতা</div>
+  <div class="ledger-wrap" style="margin-bottom:20px">
+    <table class="ledger-tbl">
+      <thead>
+        <tr>
+          <th class="th-hash">#</th>
+          <th>1000</th><th>500</th><th>100</th><th>50</th>
+          <th>20</th><th>10</th><th>5</th>
+          <th class="th-del"></th>
+        </tr>
+      </thead>
+      <tbody id="ledgerBody">
+        <tr>
+          <td colspan="9">
+            <div class="empty-state">
+              <span class="empty-icon">📒</span>
+              কোনো এন্ট্রি নেই<br>উপর থেকে নোট যোগ করুন
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- GRAND TOTAL -->
+  <div class="grand-card">
+    <div class="gc-top">
+      <div>
+        <div class="gc-label">সর্বমোট টাকা</div>
+        <div class="gc-sub">Grand Total</div>
+      </div>
+      <div class="gc-amount" id="gcAmount">৳ 0</div>
+    </div>
+    <div class="gc-breakdown" id="gcBreakdown">
+      <span class="gc-chip" style="color:var(--text-muted)">এখনো কোনো এন্ট্রি নেই</span>
+    </div>
+  </div>
+
+  <button class="reset-btn" onclick="resetAll()">✕ &nbsp; সব মুছুন</button>
+</div>
+
+<script>
+const NOTES=[1000,500,100,50,20,10,5];
+let rows=[];
+let activeNote=null;
+
+function selNote(n,el){
+  document.querySelectorAll('.note-pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  activeNote=n;
+  const sv=document.getElementById('sndVal');
+  sv.textContent='৳'+n;sv.classList.add('live');
+  updatePreview();
+  document.getElementById('qInp').select();
+}
+
+function dq(d){
+  const i=document.getElementById('qInp');
+  i.value=Math.max(1,(parseInt(i.value)||1)+d);
+  updatePreview();
+}
+
+function updatePreview(){
+  const q=parseInt(document.getElementById('qInp').value)||0;
+  if(!activeNote){return;}
+  document.getElementById('psFormula').textContent=`৳${activeNote}  ×  ${q}`;
+  document.getElementById('psResult').textContent=`৳ ${(activeNote*q).toLocaleString()}`;
+}
+
+function addEntry(){
+  if(!activeNote){alert('আগে একটি নোট বেছে নিন!');return;}
+  const qty=parseInt(document.getElementById('qInp').value)||1;
+  const row={};NOTES.forEach(n=>row[n]=0);row[activeNote]=qty;
+  rows.push({data:row,id:Date.now()});
+  render();
+  document.getElementById('qInp').value=1;
+  updatePreview();
+}
+
+function delRow(id){rows=rows.filter(r=>r.id!==id);render();}
+
+function resetAll(){
+  if(!rows.length)return;
+  if(confirm('সব এন্ট্রি মুছে ফেলবেন?')){rows=[];render();}
+}
+
+function render(){
+  const body=document.getElementById('ledgerBody');
+  if(!rows.length){
+    body.innerHTML=`<tr><td colspan="9"><div class="empty-state"><span class="empty-icon">📒</span>কোনো এন্ট্রি নেই<br>উপর থেকে নোট যোগ করুন</div></td></tr>`;
+    updateGrand({});return;
+  }
+
+  const colQ={};NOTES.forEach(n=>colQ[n]=rows.reduce((s,r)=>s+r.data[n],0));
+  const colA={};NOTES.forEach(n=>colA[n]=colQ[n]*n);
+
+  let html=rows.map((r,i)=>`
+    <tr>
+      <td class="td-hash">${i+1}</td>
+      ${NOTES.map(n=>r.data[n]>0
+        ?`<td><span class="cell-chip">${r.data[n]}</span></td>`
+        :`<td><span class="cell-dot">·</span></td>`).join('')}
+      <td><button class="del-btn" onclick="delRow(${r.id})">✕</button></td>
+    </tr>`).join('');
+
+  // Sigma row
+  html+=`<tr class="sigma-row">
+    <td class="td-hash" style="font-size:13px;color:var(--text-muted)">Σ</td>
+    ${NOTES.map(n=>`<td>
+      <span class="sig-qty">${colQ[n]}×</span>
+      <span class="sig-amt">${colA[n]>0?'৳'+colA[n].toLocaleString():''}</span>
+    </td>`).join('')}
+    <td></td>
+  </tr>`;
+
+  body.innerHTML=html;
+  updateGrand(colA,colQ);
+}
+
+function updateGrand(colA,colQ){
+  const grand=NOTES.reduce((s,n)=>s+(colA[n]||0),0);
+  document.getElementById('gcAmount').textContent='৳ '+grand.toLocaleString();
+  document.getElementById('hTotal').textContent='৳ '+grand.toLocaleString();
+
+  const bd=document.getElementById('gcBreakdown');
+  if(!rows.length){
+    bd.innerHTML=`<span class="gc-chip" style="color:var(--text-muted)">এখনো কোনো এন্ট্রি নেই</span>`;
+    return;
+  }
+  bd.innerHTML=NOTES.filter(n=>(colQ[n]||0)>0)
+    .map(n=>`<span class="gc-chip">${colQ[n]}× ৳${n} = ৳${colA[n].toLocaleString()}</span>`)
+    .join('');
+}
+</script>
+</body>
+</html>
