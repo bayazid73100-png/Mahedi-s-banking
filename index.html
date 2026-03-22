@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mahedi's Bank</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=DM+Sans:wght@300;400;500&family=Tiro+Bangla&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+input[type=number]{-moz-appearance:textfield}
+input::-webkit-inner-spin-button,input::-webkit-outer-spin-button{-webkit-appearance:none}
+:root{
+  --gb:rgba(255,255,255,0.055);
+  --gbd:rgba(255,255,255,0.12);
+  --gbdb:rgba(255,255,255,0.28);
+  --tp:rgba(255,255,255,0.95);
+  --ts:rgba(255,255,255,0.5);
+  --tm:rgba(255,255,255,0.22);
+}
+html{scroll-behavior:smooth}
+body{min-height:100vh;background:#050505;color:var(--tp);font-family:'DM Sans',sans-serif;font-weight:300;overflow-x:hidden;position:relative}
+
+/* BG */
+.bgs{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.orb{position:absolute;border-radius:50%;filter:blur(100px);animation:oF 12s ease-in-out infinite}
+.o1{width:600px;height:600px;background:rgba(255,255,255,0.028);top:-200px;left:-200px}
+.o2{width:400px;height:400px;background:rgba(255,255,255,0.018);bottom:-100px;right:-100px;animation-delay:-5s}
+.o3{width:300px;height:300px;background:rgba(255,255,255,0.012);top:40%;left:60%;animation-delay:-8s}
+@keyframes oF{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(30px,-40px) scale(1.05)}66%{transform:translate(-20px,20px) scale(.97)}}
+.bgrid{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,0.022) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.022) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,black 40%,transparent 100%)}
+
+/* HEADER */
+header{position:sticky;top:0;z-index:100;padding:0 20px;height:68px;display:flex;align-items:center;gap:14px;background:rgba(5,5,5,0.82);backdrop-filter:blur(40px) saturate(1.5);-webkit-backdrop-filter:blur(40px) saturate(1.5);border-bottom:1px solid var(--gbd)}
+.logo{width:40px;height:40px;border-radius:10px;border:1px solid var(--gbdb);display:flex;align-items:center;justify-content:center;font-size:18px;background:var(--gb);box-shadow:inset 0 1px 0 rgba(255,255,255,0.12);flex-shrink:0}
+.brand{flex:1}
+.bn{font-family:'Cinzel',serif;font-size:14px;font-weight:600;letter-spacing:3px;color:var(--tp)}
+.bt{font-family:'Tiro Bangla',serif;font-size:10px;color:var(--tm);margin-top:3px}
+.htw{text-align:right}
+.htl{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--tm)}
+.htv{font-family:'Cinzel',serif;font-size:22px;font-weight:700;color:var(--tp)}
+
+/* SAVE BADGE */
+.save-badge{display:inline-flex;align-items:center;gap:5px;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--tm);padding:4px 10px;border-radius:20px;border:1px solid rgba(255,255,255,0.07);background:rgba(255,255,255,0.03);margin-left:10px;transition:all .4s}
+.save-badge.saved{color:rgba(100,255,150,0.7);border-color:rgba(100,255,150,0.2);background:rgba(100,255,150,0.04)}
+.save-dot{width:5px;height:5px;border-radius:50%;background:currentColor}
+
+/* PAGE */
+.page{position:relative;z-index:1;max-width:500px;margin:0 auto;padding:24px 14px 80px}
+
+.stag{display:inline-flex;align-items:center;gap:8px;font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--tm);margin-bottom:12px}
+.stag::before{content:'';display:block;width:18px;height:1px;background:var(--gbdb)}
+
+/* CARD */
+.card{border-radius:22px;background:var(--gb);backdrop-filter:blur(32px) saturate(1.4);-webkit-backdrop-filter:blur(32px) saturate(1.4);border:1px solid var(--gbd);box-shadow:0 24px 64px rgba(0,0,0,0.6),inset 0 1px 0 rgba(255,255,255,0.08);padding:22px;margin-bottom:18px;position:relative;overflow:hidden;animation:cU .55s cubic-bezier(.16,1,.3,1) both}
+.card::before{content:'';position:absolute;top:0;left:20px;right:20px;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.18),transparent)}
+@keyframes cU{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+/* NOTE PILLS */
+.npg{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:18px}
+.npill{padding:13px 4px 10px;border-radius:14px;border:1px solid var(--gbd);background:rgba(255,255,255,0.04);cursor:pointer;text-align:center;transition:all .2s cubic-bezier(.34,1.56,.64,1);position:relative;overflow:hidden}
+.npill::after{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(rgba(255,255,255,0.05),transparent);border-radius:14px 14px 0 0;pointer-events:none}
+.npill:hover{border-color:rgba(255,255,255,0.22);background:rgba(255,255,255,0.08);transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,0.4)}
+.npill .ns{display:block;font-size:9px;color:var(--tm);margin-bottom:2px}
+.npill .nv{display:block;font-family:'Cinzel',serif;font-size:13px;font-weight:600;color:rgba(255,255,255,0.5);transition:color .2s}
+.npill.active{border-color:rgba(255,255,255,0.42);background:rgba(255,255,255,0.12);transform:translateY(-3px) scale(1.05);box-shadow:0 12px 28px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.18)}
+.npill.active .nv{color:var(--tp)}
+
+/* QTY */
+.qb{display:flex;align-items:stretch;gap:10px;margin-bottom:14px}
+.snd{min-width:84px;border-radius:14px;border:1px solid var(--gbd);background:rgba(255,255,255,0.04);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:10px;box-shadow:inset 0 1px 0 rgba(255,255,255,0.05)}
+.snd-l{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--tm)}
+.snd-v{font-family:'Cinzel',serif;font-size:20px;font-weight:700;color:var(--tm);line-height:1;transition:color .3s}
+.snd-v.live{color:var(--tp)}
+.qr{flex:1;display:flex;flex-direction:column;gap:5px}
+.ql{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--tm)}
+.qri{display:flex;gap:6px;align-items:center;flex:1}
+.qbtn{width:40px;height:40px;flex-shrink:0;border-radius:11px;border:1px solid var(--gbd);background:rgba(255,255,255,0.06);color:var(--ts);font-size:22px;font-family:'DM Sans',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;line-height:1}
+.qbtn:hover{background:rgba(255,255,255,0.12);border-color:var(--gbdb);color:white}
+.qbtn:active{transform:scale(.9)}
+.qinp{flex:1;height:40px;background:rgba(255,255,255,0.05);border:1px solid var(--gbd);border-radius:11px;color:var(--tp);font-family:'Cinzel',serif;font-size:20px;font-weight:600;text-align:center;outline:none;transition:all .2s}
+.qinp:focus{border-color:rgba(255,255,255,0.32);background:rgba(255,255,255,0.08);box-shadow:0 0 0 3px rgba(255,255,255,0.04)}
+
+/* PREVIEW */
+.prev{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-radius:12px;background:rgba(255,255,255,0.03);border:1px solid var(--gbd);margin-bottom:14px}
+.pf{font-size:12px;color:var(--tm);font-family:'Cinzel',serif;letter-spacing:1px}
+.pr{font-family:'Cinzel',serif;font-size:15px;font-weight:600;color:var(--tp)}
+
+/* ADD BTN */
+.addbtn{width:100%;padding:15px;border-radius:14px;border:1px solid rgba(255,255,255,0.2);background:linear-gradient(135deg,rgba(255,255,255,0.11),rgba(255,255,255,0.05));color:var(--tp);font-family:'Cinzel',serif;font-size:12px;font-weight:600;letter-spacing:4px;cursor:pointer;transition:all .22s;box-shadow:0 4px 18px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.12)}
+.addbtn:hover{background:linear-gradient(135deg,rgba(255,255,255,0.18),rgba(255,255,255,0.09));border-color:rgba(255,255,255,0.38);transform:translateY(-2px);box-shadow:0 10px 28px rgba(0,0,0,0.5)}
+.addbtn:active{transform:translateY(0)}
+
+/* ═══ LEDGER TABLE ═══ */
+.lwrap{border-radius:20px;overflow:hidden;border:1px solid var(--gbd);background:rgba(255,255,255,0.03);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);box-shadow:0 20px 60px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06);margin-bottom:18px;overflow-x:auto;position:relative;animation:cU .55s cubic-bezier(.16,1,.3,1) .12s both}
+.lwrap::before{content:'';position:absolute;top:0;left:20px;right:20px;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.14),transparent);z-index:2}
+
+.ltbl{width:100%;border-collapse:collapse;min-width:400px}
+
+/* THEAD */
+.ltbl thead tr{background:rgba(255,255,255,0.04)}
+.ltbl thead th{padding:13px 10px;font-family:'Cinzel',serif;font-size:10px;font-weight:600;letter-spacing:1.5px;color:var(--ts);text-align:center;border-bottom:1px solid var(--gbd);border-right:1px solid rgba(255,255,255,0.05)}
+.ltbl thead th:last-child{border-right:none}
+.th-row{width:32px;color:var(--tm)!important;font-size:9px}
+
+/* ROW */
+.ltbl tbody tr{border-bottom:1px solid rgba(255,255,255,0.04);transition:background .15s;animation:rowIn .32s cubic-bezier(.16,1,.3,1)}
+@keyframes rowIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.ltbl tbody tr:hover{background:rgba(255,255,255,0.025)}
+.ltbl tbody tr:last-of-type{border-bottom:none}
+
+.ltbl td{padding:10px 10px;text-align:center;border-right:1px solid rgba(255,255,255,0.04)}
+.ltbl td:last-child{border-right:none}
+.td-row{font-size:10px;color:var(--tm);font-family:'Cinzel',serif}
+
+/* Cell chip */
+.chip{display:inline-flex;align-items:center;justify-content:center;min-width:34px;padding:5px 9px;border-radius:8px;font-family:'Cinzel',serif;font-size:13px;font-weight:600;background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.14);color:var(--tp)}
+.dot{color:rgba(255,255,255,0.1);font-size:10px}
+
+/* Sigma row */
+.sigrow{background:rgba(255,255,255,0.05)!important;border-top:1px solid rgba(255,255,255,0.12)!important}
+.sigrow td{padding:11px 10px!important}
+.sig-q{font-family:'Cinzel',serif;font-size:11px;color:var(--ts);display:block}
+.sig-a{font-family:'Cinzel',serif;font-size:13px;font-weight:700;color:var(--tp);display:block}
+
+/* Empty */
+.empty-st{padding:36px 20px;text-align:center;font-family:'Tiro Bangla',serif;color:var(--tm);font-size:14px;line-height:2.2}
+.ei{font-size:28px;opacity:.35;display:block;margin-bottom:6px}
+
+/* GRAND CARD */
+.gc{border-radius:22px;padding:26px;background:rgba(255,255,255,0.06);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border:1px solid rgba(255,255,255,0.17);box-shadow:0 28px 72px rgba(0,0,0,0.65),inset 0 1px 0 rgba(255,255,255,0.13);position:relative;overflow:hidden;margin-bottom:18px;animation:cU .55s cubic-bezier(.16,1,.3,1) .2s both}
+.gc::before{content:'';position:absolute;top:0;left:28px;right:28px;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.28),transparent)}
+.gc::after{content:'';position:absolute;bottom:-50px;right:-50px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,0.022);filter:blur(20px);pointer-events:none}
+.gc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px}
+.gc-lbl{font-family:'Tiro Bangla',serif;font-size:14px;color:var(--ts);margin-bottom:3px}
+.gc-sub{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--tm)}
+.gc-amt{font-family:'Cinzel',serif;font-size:38px;font-weight:700;color:var(--tp);letter-spacing:-1px;line-height:1;text-shadow:0 0 50px rgba(255,255,255,0.12)}
+.gc-bd{display:flex;flex-wrap:wrap;gap:6px;padding-top:16px;border-top:1px solid var(--gbd)}
+.gc-chip{padding:4px 11px;border-radius:20px;background:rgba(255,255,255,0.05);border:1px solid var(--gbd);font-family:'Cinzel',serif;font-size:10px;color:var(--ts)}
+
+/* RESET */
+.resetbtn{display:block;margin:0 auto;background:none;border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.2);border-radius:11px;padding:10px 30px;font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:all .2s}
+.resetbtn:hover{border-color:rgba(255,80,80,0.3);color:rgba(255,120,120,0.6);background:rgba(255,50,50,0.04)}
+</style>
+</head>
+<body>
+
+<div class="bgs">
+  <div class="orb o1"></div>
+  <div class="orb o2"></div>
+  <div class="orb o3"></div>
+</div>
+<div class="bgrid"></div>
+
+<header>
+  <div class="logo">🏦</div>
+  <div class="brand">
+    <div class="bn">MAHEDI'S BANK</div>
+    <div class="bt">মাটির ব্যাংক — টাকা গণনা</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:0">
+    <div class="save-badge" id="saveBadge"><span class="save-dot"></span><span id="saveText">SAVED</span></div>
+  </div>
+  <div class="htw">
+    <div class="htl">সর্বমোট</div>
+    <div class="htv" id="hTotal">৳ 0</div>
+  </div>
+</header>
+
+<div class="page">
+
+  <div class="stag">এন্ট্রি করুন</div>
+  <div class="card">
+    <!-- Note pills -->
+    <div class="npg">
+      <div class="npill" onclick="selNote(1000,this)"><span class="ns">৳</span><span class="nv">1000</span></div>
+      <div class="npill" onclick="selNote(500,this)"><span class="ns">৳</span><span class="nv">500</span></div>
+      <div class="npill" onclick="selNote(100,this)"><span class="ns">৳</span><span class="nv">100</span></div>
+      <div class="npill" onclick="selNote(50,this)"><span class="ns">৳</span><span class="nv">50</span></div>
+      <div class="npill" onclick="selNote(20,this)"><span class="ns">৳</span><span class="nv">20</span></div>
+      <div class="npill" onclick="selNote(10,this)"><span class="ns">৳</span><span class="nv">10</span></div>
+      <div class="npill" onclick="selNote(5,this)"><span class="ns">৳</span><span class="nv">5</span></div>
+    </div>
+
+    <div class="qb">
+      <div class="snd">
+        <div class="snd-l">নোট</div>
+        <div class="snd-v" id="sndV">—</div>
+      </div>
+      <div class="qr">
+        <div class="ql">পরিমাণ — Quantity</div>
+        <div class="qri">
+          <button class="qbtn" onclick="dq(-1)">−</button>
+          <input class="qinp" type="number" id="qInp" value="1" min="1" oninput="upPrev()">
+          <button class="qbtn" onclick="dq(1)">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="prev">
+      <span class="pf" id="pF">নোট বেছে নিন ↑</span>
+      <span class="pr" id="pR">৳ —</span>
+    </div>
+
+    <button class="addbtn" onclick="addEntry()">＋ &nbsp; ADD ENTRY</button>
+  </div>
+
+  <div class="stag">হিসাবের খাতা</div>
+  <div class="lwrap">
+    <table class="ltbl">
+      <thead>
+        <tr>
+          <th class="th-row">#</th>
+          <th>1000</th><th>500</th><th>100</th>
+          <th>50</th><th>20</th><th>10</th><th>5</th>
+        </tr>
+      </thead>
+      <tbody id="lBody">
+        <tr><td colspan="8"><div class="empty-st"><span class="ei">📒</span>কোনো এন্ট্রি নেই<br>উপর থেকে নোট যোগ করুন</div></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="gc">
+    <div class="gc-top">
+      <div>
+        <div class="gc-lbl">সর্বমোট টাকা</div>
+        <div class="gc-sub">Grand Total</div>
+      </div>
+      <div class="gc-amt" id="gcAmt">৳ 0</div>
+    </div>
+    <div class="gc-bd" id="gcBd">
+      <span class="gc-chip" style="color:var(--tm)">এখনো কোনো এন্ট্রি নেই</span>
+    </div>
+  </div>
+
+  <button class="resetbtn" onclick="resetAll()">✕ &nbsp; সব মুছুন</button>
+</div>
+
+<script>
+// ─── NOTES & STATE ───────────────────────────────
+const NOTES = [1000,500,100,50,20,10,5];
+
+// columns[n] = array of quantities entered for that note, top to bottom
+// e.g. columns[1000] = [10, 10, 5]  means three entries: 10×1000, 10×1000, 5×1000
+let columns = {};
+NOTES.forEach(n => columns[n] = []);
+
+let activeNote = null;
+
+// ─── LOCALSTORAGE ────────────────────────────────
+const STORAGE_KEY = 'mahedi_bank_v2';
+
+function saveData() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(columns));
+    showSaved(true);
+  } catch(e) {}
+}
+
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      // Validate
+      NOTES.forEach(n => {
+        if (Array.isArray(parsed[n])) columns[n] = parsed[n];
+      });
+    }
+  } catch(e) {}
+}
+
+let saveTimer;
+function showSaved(ok) {
+  const b = document.getElementById('saveBadge');
+  const t = document.getElementById('saveText');
+  clearTimeout(saveTimer);
+  if (ok) {
+    b.classList.add('saved');
+    t.textContent = 'SAVED ✓';
+    saveTimer = setTimeout(() => {
+      b.classList.remove('saved');
+      t.textContent = 'AUTO SAVE';
+    }, 2000);
+  }
+}
+
+// ─── NOTE SELECTION ──────────────────────────────
+function selNote(n, el) {
+  document.querySelectorAll('.npill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  activeNote = n;
+  const sv = document.getElementById('sndV');
+  sv.textContent = '৳' + n;
+  sv.classList.add('live');
+  upPrev();
+  document.getElementById('qInp').select();
+}
+
+function dq(d) {
+  const i = document.getElementById('qInp');
+  i.value = Math.max(1, (parseInt(i.value) || 1) + d);
+  upPrev();
+}
+
+function upPrev() {
+  const q = parseInt(document.getElementById('qInp').value) || 0;
+  if (!activeNote) return;
+  document.getElementById('pF').textContent = `৳${activeNote}  ×  ${q}`;
+  document.getElementById('pR').textContent  = `৳ ${(activeNote * q).toLocaleString()}`;
+}
+
+// ─── ADD ENTRY ────────────────────────────────────
+// Each entry pushes a quantity into that note's column array.
+// The table renders all columns side by side — each column is independent.
+function addEntry() {
+  if (!activeNote) { alert('আগে একটি নোট বেছে নিন!'); return; }
+  const qty = parseInt(document.getElementById('qInp').value) || 1;
+  columns[activeNote].push(qty);
+  saveData();
+  render();
+  document.getElementById('qInp').value = 1;
+  upPrev();
+}
+
+// ─── DELETE a single cell (row index in that column) ─
+function delCell(note, idx) {
+  columns[note].splice(idx, 1);
+  saveData();
+  render();
+}
+
+// ─── RESET ────────────────────────────────────────
+function resetAll() {
+  if (NOTES.every(n => columns[n].length === 0)) return;
+  if (confirm('সব এন্ট্রি মুছে ফেলবেন?')) {
+    NOTES.forEach(n => columns[n] = []);
+    saveData();
+    render();
+  }
+}
+
+// ─── RENDER ────────────────────────────────────────
+// The table has one column per note denomination.
+// Rows = max number of entries across all columns.
+// Each cell shows the qty for that note at that row index (or · if none).
+function render() {
+  const body = document.getElementById('lBody');
+
+  const maxRows = Math.max(...NOTES.map(n => columns[n].length), 0);
+
+  if (maxRows === 0) {
+    body.innerHTML = `<tr><td colspan="8"><div class="empty-st"><span class="ei">📒</span>কোনো এন্ট্রি নেই<br>উপর থেকে নোট যোগ করুন</div></td></tr>`;
+    renderGrand();
+    return;
+  }
+
+  let html = '';
+  for (let r = 0; r < maxRows; r++) {
+    html += `<tr><td class="td-row">${r + 1}</td>`;
+    for (const n of NOTES) {
+      if (r < columns[n].length) {
+        html += `<td><span class="chip" style="cursor:pointer" onclick="delCell(${n},${r})" title="ক্লিক করে মুছুন">${columns[n][r]}</span></td>`;
+      } else {
+        html += `<td><span class="dot">·</span></td>`;
+      }
+    }
+    html += `</tr>`;
+  }
+
+  // Sigma row — totals per column
+  html += `<tr class="sigrow"><td class="td-row" style="font-size:13px;color:var(--ts)">Σ</td>`;
+  for (const n of NOTES) {
+    const totalQty = columns[n].reduce((s, v) => s + v, 0);
+    const totalAmt = totalQty * n;
+    if (totalQty > 0) {
+      html += `<td><span class="sig-q">${totalQty}×</span><span class="sig-a">৳${totalAmt.toLocaleString()}</span></td>`;
+    } else {
+      html += `<td><span class="dot">·</span></td>`;
+    }
+  }
+  html += `</tr>`;
+
+  body.innerHTML = html;
+  renderGrand();
+}
+
+function renderGrand() {
+  const colTotals = {};
+  NOTES.forEach(n => {
+    const qty = columns[n].reduce((s,v) => s+v, 0);
+    colTotals[n] = { qty, amt: qty * n };
+  });
+
+  const grand = NOTES.reduce((s, n) => s + colTotals[n].amt, 0);
+  document.getElementById('gcAmt').textContent  = '৳ ' + grand.toLocaleString();
+  document.getElementById('hTotal').textContent = '৳ ' + grand.toLocaleString();
+
+  const bd = document.getElementById('gcBd');
+  const active = NOTES.filter(n => colTotals[n].qty > 0);
+  if (!active.length) {
+    bd.innerHTML = `<span class="gc-chip" style="color:var(--tm)">এখনো কোনো এন্ট্রি নেই</span>`;
+  } else {
+    bd.innerHTML = active.map(n =>
+      `<span class="gc-chip">${colTotals[n].qty}× ৳${n} = ৳${colTotals[n].amt.toLocaleString()}</span>`
+    ).join('');
+  }
+}
+
+// ─── INIT ─────────────────────────────────────────
+loadData();
+render();
+document.getElementById('saveText').textContent = 'AUTO SAVE';
+</script>
+</body>
+</html>
